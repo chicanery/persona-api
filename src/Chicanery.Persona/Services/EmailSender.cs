@@ -7,10 +7,21 @@ using System.Threading.Tasks;
 
 namespace Chicanery.Persona.Services
 {
+    public interface IEmailSender
+    {
+        Task SendEmailAsync(string email, string subject, string message);
+    }
+
+    public class EmailSenderOptions
+    {
+        public string ApiKeyId { get; set; }
+        public string From { get; set; }
+    }
+
     public class EmailSender : IEmailSender
     {
-        private readonly HttpClient _client = new HttpClient();
         private readonly IOptions<EmailSenderOptions> _options;
+        private readonly HttpClient _client;
 
         public EmailSender(IOptions<EmailSenderOptions> options)
         {
@@ -33,11 +44,5 @@ namespace Chicanery.Persona.Services
                 new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
         }
-    }
-
-    public class EmailSenderOptions
-    {
-        public string ApiKeyId { get; set; }
-        public string From { get; set; }
     }
 }

@@ -51,9 +51,12 @@ namespace Chicanery.Persona
 
             services.AddMvc();
 
-            // Add application services.
+            // Configure application services.
+            services.Configure<GoogleOptions>(Configuration.GetSection("Authentication:Google"));
             services.Configure<EmailSenderOptions>(Configuration.GetSection("Services:SendGrid"));
             services.Configure<SmsSenderOptions>(Configuration.GetSection("Services:Twilio"));
+
+            // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<ISmsSender, SmsSender>();
 
@@ -85,12 +88,7 @@ namespace Chicanery.Persona
             app.UseStaticFiles();
 
             app.UseIdentity();
-            app.UseGoogleAuthentication(new GoogleOptions
-            {
-                ClientId = Configuration["Authentication:Google:ClientId"],
-                ClientSecret = Configuration["Authentication:Google:ClientSecret"]
-            });
-
+            app.UseGoogleAuthentication();
             app.UseIdentityServer();
 
             app.UseMvc(routes =>

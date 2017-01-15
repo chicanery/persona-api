@@ -5,10 +5,22 @@ using System.Threading.Tasks;
 
 namespace Chicanery.Persona.Services
 {
+    public interface ISmsSender
+    {
+        Task SendSmsAsync(string number, string message);
+    }
+
+    public class SmsSenderOptions
+    {
+        public string AccountSid { get; set; }
+        public string AuthToken { get; set; }
+        public string Number { get; set; }
+    }
+
     public class SmsSender : ISmsSender
     {
-        private readonly HttpClient _client = new HttpClient();
         private readonly IOptions<SmsSenderOptions> _options;
+        private readonly HttpClient _client;
 
         public SmsSender(IOptions<SmsSenderOptions> options)
         {
@@ -29,12 +41,5 @@ namespace Chicanery.Persona.Services
                 new FormUrlEncodedContent(body));
             response.EnsureSuccessStatusCode();
         }
-    }
-
-    public class SmsSenderOptions
-    {
-        public string AccountSid { get; set; }
-        public string AuthToken { get; set; }
-        public string Number { get; set; }
     }
 }
