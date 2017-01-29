@@ -23,10 +23,10 @@ namespace Chicanery.Persona.Services
         private readonly IOptions<EmailSenderOptions> _options;
         private readonly HttpClient _client;
 
-        public EmailSender(IOptions<EmailSenderOptions> options)
+        public EmailSender(IOptions<EmailSenderOptions> options, HttpClient client)
         {
             _options = options;
-            _client = new HttpClient();
+            _client = client;
             _client.DefaultRequestHeaders.Authorization = 
                 new AuthenticationHeaderValue("Bearer", _options.Value.ApiKeyId);
         }

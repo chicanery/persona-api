@@ -22,10 +22,10 @@ namespace Chicanery.Persona.Services
         private readonly IOptions<SmsSenderOptions> _options;
         private readonly HttpClient _client;
 
-        public SmsSender(IOptions<SmsSenderOptions> options)
+        public SmsSender(IOptions<SmsSenderOptions> options, HttpClient client)
         {
             _options = options;
-            _client = new HttpClient();
+            _client = client;
             _client.SetBasicAuthentication(_options.Value.AccountSid, _options.Value.AuthToken);
         }
 

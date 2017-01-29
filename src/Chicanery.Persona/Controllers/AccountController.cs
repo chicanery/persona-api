@@ -19,6 +19,7 @@ namespace Chicanery.Persona.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
+        private readonly IAvatarGenerator _avatarGenerator;
         private readonly ILogger _logger;
 
         public AccountController(
@@ -26,12 +27,14 @@ namespace Chicanery.Persona.Controllers
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
+            IAvatarGenerator avatarGenerator,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
+            _avatarGenerator = avatarGenerator;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
@@ -115,6 +118,7 @@ namespace Chicanery.Persona.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                user.Avatar = await _avatarGenerator.GenerateAvatarAsync(user.Email);
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -217,6 +221,7 @@ namespace Chicanery.Persona.Controllers
                     return View("ExternalLoginFailure");
                 }
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                user.Avatar = await _avatarGenerator.GenerateAvatarAsync(user.Email);
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -450,7 +455,7 @@ namespace Chicanery.Persona.Controllers
                 return View(model);
             }
         }
-
+        
         #region Helpers
 
         private void AddErrors(IdentityResult result)

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net.Http;
 
 namespace Chicanery.Persona
 {
@@ -49,6 +50,7 @@ namespace Chicanery.Persona
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddCors();
             services.AddMvc();
 
             // Configure application services.
@@ -57,8 +59,10 @@ namespace Chicanery.Persona
             services.Configure<SmsSenderOptions>(Configuration.GetSection("Services:Twilio"));
 
             // Add application services.
+            services.AddTransient<HttpClient>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<ISmsSender, SmsSender>();
+            services.AddTransient<IAvatarGenerator, AvatarGenerator>();
 
             services.AddIdentityServer()
                 .AddTemporarySigningCredential()
@@ -84,6 +88,11 @@ namespace Chicanery.Persona
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseStaticFiles();
 
