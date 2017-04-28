@@ -1,4 +1,5 @@
 ﻿using Chicanery.Persona.Models;
+using Microsoft.Extensions.Options;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -12,12 +13,19 @@ namespace Chicanery.Persona.Services
         Task<Avatar> GenerateAvatarAsync(string value);
     }
 
+    public class AvatarGeneratorOptions
+    {
+        public string BaseUri { get; set; }
+    }
+
     public class AvatarGenerator : IAvatarGenerator
     {
+        private readonly AvatarGeneratorOptions _options;
         private readonly HttpClient _client;
 
-        public AvatarGenerator(HttpClient client)
+        public AvatarGenerator(IOptions<AvatarGeneratorOptions> options, HttpClient client)
         {
+            _options = options.Value;
             _client = client;
         }
 
@@ -27,7 +35,7 @@ namespace Chicanery.Persona.Services
             {
                 var data = md5.ComputeHash(Encoding.UTF8.GetBytes(value));
                 var hash = string.Join("", data.Select(b => b.ToString("x2")));
-                var response = await _client.GetAsync($"https://www.gravatar.com/avatar/{hash}?d=identicon&s=200");
+                var response = await _client.GetAsync($"{_options.BaseUri}/avatar/{hash}?d=identicon&s=200");
                 response.EnsureSuccessStatusCode();
                 var mime = response.Headers.FirstOrDefault(h => h.Key == "Content-Type").Value?.First() ?? "image/png";
                 var image = await response.Content.ReadAsByteArrayAsync();

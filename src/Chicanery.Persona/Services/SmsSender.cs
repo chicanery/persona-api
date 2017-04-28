@@ -12,6 +12,7 @@ namespace Chicanery.Persona.Services
 
     public class SmsSenderOptions
     {
+        public string BaseUri { get; set; }
         public string AccountSid { get; set; }
         public string AuthToken { get; set; }
         public string Number { get; set; }
@@ -19,14 +20,14 @@ namespace Chicanery.Persona.Services
 
     public class SmsSender : ISmsSender
     {
-        private readonly IOptions<SmsSenderOptions> _options;
+        private readonly SmsSenderOptions _options;
         private readonly HttpClient _client;
 
         public SmsSender(IOptions<SmsSenderOptions> options, HttpClient client)
         {
-            _options = options;
+            _options = options.Value;
             _client = client;
-            _client.SetBasicAuthentication(_options.Value.AccountSid, _options.Value.AuthToken);
+            _client.SetBasicAuthentication(_options.AccountSid, _options.AuthToken);
         }
 
         public async Task SendSmsAsync(string number, string message)
@@ -34,10 +35,10 @@ namespace Chicanery.Persona.Services
             var body = new Dictionary<string, string>
             {
                 { "To", number },
-                { "From", _options.Value.Number },
+                { "From", _options.Number },
                 { "Body", message }
             };
-            var response = await _client.PostAsync($"https://api.twilio.com/2010-04-01/Accounts/{_options.Value.AccountSid}/Messages",
+            var response = await _client.PostAsync($"{_options.BaseUri}/2010-04-01/Accounts/{_options.AccountSid}/Messages",
                 new FormUrlEncodedContent(body));
             response.EnsureSuccessStatusCode();
         }

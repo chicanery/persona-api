@@ -1,41 +1,50 @@
 ﻿@model RegisterViewModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Create an account";
 }
 
-<h2>@ViewData["Title"].</h2>
+<div class="ms-Grid">
+    <div class="ms-Grid-col ms-u-sm12 ms-u-md8 ms-u-lg6 ms-u-xl4 ms-u-mdPush2 ms-u-lgPush3 ms-u-xlPush4">
 
-<form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
-    <h4>Create a new account.</h4>
-    <hr />
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group">
-        <label asp-for="Email" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
+        <h2 class="ms-font-su">Create an account</h2>
+
+        <form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+            <div asp-validation-summary="All" class="ms-font-m"></div>
+
+            <div class="ms-TextField">
+                <label asp-for="Email" class="ms-Label"></label>
+                <input asp-for="Email" class="ms-TextField-field" />
+                <span asp-validation-for="Email"></span>
+            </div>
+
+            <div class="ms-TextField">
+                <label asp-for="Password" class="ms-Label"></label>
+                <input asp-for="Password" class="ms-TextField-field" />
+                <span asp-validation-for="Password"></span>
+            </div>
+
+            <div class="ms-TextField">
+                <label asp-for="ConfirmPassword" class="ms-Label"></label>
+                <input asp-for="ConfirmPassword" class="ms-TextField-field" />
+                <span asp-validation-for="ConfirmPassword"></span>
+            </div>
+
+            <br/>
+
+            <div>
+                <button class="ms-Button ms-Button--primary" type="submit">
+                    <span class="ms-Button-label">Register</span>
+                </button>
+                <span class="ms-font-m">or</span>
+
+                <a class="ms-Link" asp-action="login">
+                    sign in
+                </a>
+            </div>
+
+        </form>
     </div>
-    <div class="form-group">
-        <label asp-for="Password" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="Password" class="form-control" />
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="ConfirmPassword" class="form-control" />
-            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-default">Register</button>
-        </div>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

@@ -57,8 +57,10 @@ namespace Chicanery.Persona
             services.Configure<GoogleOptions>(Configuration.GetSection("Authentication:Google"));
             services.Configure<EmailSenderOptions>(Configuration.GetSection("Services:SendGrid"));
             services.Configure<SmsSenderOptions>(Configuration.GetSection("Services:Twilio"));
+            services.Configure<AvatarGeneratorOptions>(Configuration.GetSection("Services:Gravatar"));
 
             // Add application services.
+            services.AddSingleton<HttpClientHandler>();
             services.AddTransient<HttpClient>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<ISmsSender, SmsSender>();
